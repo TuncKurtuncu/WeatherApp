@@ -14,8 +14,8 @@ function MainSection() {
                 <Image
                     src={img}
                     alt="Background"
-                    layout="fill"
-                    objectFit="cover"
+                    fill          // layout="fill" yerine boolean fill prop'u
+                    style={{ objectFit: "cover" }}  // objectFit prop'u style içine alındı
                     className="w-full h-full"
                 />
             </div>

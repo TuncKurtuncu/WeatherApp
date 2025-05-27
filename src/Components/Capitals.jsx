@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Capitals({ weatherData }) {
   if (!weatherData || weatherData.length === 0) {
     return (
@@ -14,38 +16,41 @@ export default function Capitals({ weatherData }) {
         const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 
         return (
-          <div
+          <Link
             key={cityWeather.id}
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center"
+            href={`/details/${cityWeather.name}`}
+            className="block"
           >
-            <h2 className="text-xl font-semibold mb-2 text-gray-800">{cityWeather.name}</h2>
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center cursor-pointer">
+              <h2 className="text-xl font-semibold mb-2 text-gray-800">{cityWeather.name}</h2>
 
-            <img
-              src={iconUrl}
-              alt={cityWeather.weather[0].description}
-              className="w-20 h-20 mb-2"
-              loading="lazy"
-            />
+              <img
+                src={iconUrl}
+                alt={cityWeather.weather[0].description}
+                className="w-20 h-20 mb-2"
+                loading="lazy"
+              />
 
-            <p className="capitalize text-gray-600 mb-4 text-center">
-              {cityWeather.weather[0].description}
-            </p>
+              <p className="capitalize text-gray-600 mb-4 text-center">
+                {cityWeather.weather[0].description}
+              </p>
 
-            <p className="text-3xl font-bold text-blue-600 mb-4">
-              {Math.round(cityWeather.main.temp)} °C
-            </p>
+              <p className="text-3xl font-bold text-blue-600 mb-4">
+                {Math.round(cityWeather.main.temp)} °C
+              </p>
 
-            <div className="flex justify-between w-full text-sm text-gray-500">
-              <div>
-                <span>Humidity: </span>
-                <span>{cityWeather.main.humidity}%</span>
-              </div>
-              <div>
-                <span>Wind Speed: </span>
-                <span>{Math.round(cityWeather.wind.speed)} m/s</span>
+              <div className="flex justify-between w-full text-sm text-gray-500">
+                <div>
+                  <span>Humidity: </span>
+                  <span>{cityWeather.main.humidity}%</span>
+                </div>
+                <div>
+                  <span>Wind Speed: </span>
+                  <span>{Math.round(cityWeather.wind.speed)} m/s</span>
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>

@@ -70,7 +70,7 @@ export default function CityDetails({ weather }) {
 
             <main
                 className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center"
-                 style={{ backgroundImage: `url('${backgroundImage}')` }}
+                style={{ backgroundImage: `url('${backgroundImage}')` }}
             >
 
 

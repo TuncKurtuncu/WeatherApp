@@ -9,11 +9,29 @@ export default function Capitals({ weatherData }) {
     );
   }
 
+  const getVideoByWeather = (main) => {
+    switch (main.toLowerCase()) {
+      case "clear":
+        return "/Sunny.mp4";
+      case "rain":
+      case "drizzle":
+        return "/Rainy.mp4";
+      case "snow":
+        return "/Snowy.mp4";
+      case "clouds":
+        return "/Cloudy.mp4";
+      case "thunderstorm":
+        return "/Storm.mp4";
+      default:
+        return "/Default.mp4";
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
       {weatherData.map((cityWeather) => {
-        const iconCode = cityWeather.weather[0].icon;
-        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        const video = getVideoByWeather(cityWeather.weather[0].main);
+        const temperature = Math.round(cityWeather.main.temp);
 
         return (
           <Link
@@ -21,33 +39,29 @@ export default function Capitals({ weatherData }) {
             href={`/details/${cityWeather.name}`}
             className="block"
           >
-            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center cursor-pointer">
-              <h2 className="text-xl font-semibold mb-2 text-gray-800">{cityWeather.name}</h2>
+            <div className="relative perspective-[1000px]">
+              <div className="relative w-full h-80 rounded-xl shadow-lg overflow-hidden">
 
-              <img
-                src={iconUrl}
-                alt={cityWeather.weather[0].description}
-                className="w-20 h-20 mb-2"
-                loading="lazy"
-              />
+                {/* Ön Yüz */}
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white backface-hidden">
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover z-0"
+                  >
+                    <source src={video} type="video/mp4" />
+                  </video>
 
-              <p className="capitalize text-gray-600 mb-4 text-center">
-                {cityWeather.weather[0].description}
-              </p>
-
-              <p className="text-3xl font-bold text-blue-600 mb-4">
-                {Math.round(cityWeather.main.temp)} °C
-              </p>
-
-              <div className="flex justify-between w-full text-sm text-gray-500">
-                <div>
-                  <span>Humidity: </span>
-                  <span>{cityWeather.main.humidity}%</span>
+                  <div className="relative z-10 bg-black/50 px-4 py-6 rounded-lg text-center">
+                    <h2 className="text-2xl font-bold">{cityWeather.name}</h2>
+                    <p className="text-4xl font-semibold mt-1">{temperature}°C</p>
+                  </div>
                 </div>
-                <div>
-                  <span>Wind Speed: </span>
-                  <span>{Math.round(cityWeather.wind.speed)} m/s</span>
-                </div>
+
+                
+
               </div>
             </div>
           </Link>

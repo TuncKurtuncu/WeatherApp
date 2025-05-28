@@ -42,7 +42,7 @@ export default function Capitals({ weatherData }) {
             <div className="relative perspective-[1000px]">
               <div className="relative w-full h-80 rounded-xl shadow-lg overflow-hidden">
 
-                {/* Ön Yüz */}
+                
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white backface-hidden">
                   <video
                     autoPlay
@@ -60,7 +60,7 @@ export default function Capitals({ weatherData }) {
                   </div>
                 </div>
 
-                
+
 
               </div>
             </div>

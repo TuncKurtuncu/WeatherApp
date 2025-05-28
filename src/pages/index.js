@@ -4,7 +4,7 @@ import MainSection from '@/components/MainSection';
 import Capitals from '@/components/Capitals';
 
 export async function getServerSideProps() {
-  const capitals = ["London", "Amsterdam", "Ankara", "Tokyo", "Oslo", "Berlin"];
+  const capitals = ["Bern", "Amsterdam", "Ankara", "Tokyo", "Oslo", "Berlin"];
   const API_KEY = process.env.WEATHER_API_KEY;
 
   if (!API_KEY) {

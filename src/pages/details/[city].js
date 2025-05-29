@@ -1,6 +1,6 @@
 import Header from '@/Components/Header';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+
 
 
 export async function getServerSideProps(context) {
@@ -8,7 +8,7 @@ export async function getServerSideProps(context) {
     const API_KEY = process.env.WEATHER_API_KEY;
 
     try {
-        const res = await axios.get("https://api.openweathermap.org/data/2.5/weather", {
+        const res = await axios.get("https://api.openweathermap.org/data/2.5/forecast", {
             params: {
                 q: city,
                 appid: API_KEY,
@@ -16,51 +16,56 @@ export async function getServerSideProps(context) {
             },
         });
 
+        // Veriyi günlere göre grupla
+        const forecastData = res.data.list.reduce((acc, item) => {
+            const date = item.dt_txt.split(" ")[0]; // Sadece tarih kısmı
+            if (!acc[date]) acc[date] = [];
+            acc[date].push(item);
+            return acc;
+        }, {});
+
         return {
             props: {
-                weather: res.data,
+                city: res.data.city,
+                forecastData,
             },
         };
     } catch (error) {
-        console.error("Detay verisi alınamadı:", error.message);
-        return {
-            notFound: true,
-        };
+        console.error("Tahmin verisi alınamadı:", error.message);
+        return { notFound: true };
     }
 }
 
-export default function CityDetails({ weather }) {
-    const router = useRouter();
 
-    if (!weather) {
-        return <div>Veri bulunamadı.</div>;
-    }
+export default function CityDetails({ forecastData, city }) {
+    if (!forecastData || !city) return <div>Veri bulunamadı.</div>;
 
-    const {
-        name,
-        main: { temp, feels_like, temp_min, temp_max, humidity, pressure },
-        wind: { speed },
-        weather: [weatherInfo],
-        sys: { country },
+    const { name, country } = city;
 
-    } = weather;
-    const weatherCondition = weatherInfo.main.toLowerCase();
+    const todayDate = Object.keys(forecastData)[0]; // Bugünün tarihi
+    const todayForecast = forecastData[todayDate];
+    const otherDays = Object.entries(forecastData).filter(([date]) => date !== todayDate);
 
-    let backgroundImage = '/default.png';
+    const getBgWeather = (main) => {
+        switch (main.toLowerCase()) {
+            case "rain":
+            case "drizzle":
+                return "/Rainy.png";
+            case "clear":
+                return "/Sunny.png";
+            case "cloud":
+            case "clouds":
+                return "/PartlyCloudy.png";
+            case "snow":
+                return "/Snow.png";
+            case "thunderstorm":
+                return "/Thunder.png";
+            default:
+                return "/MainImg.png";
+        }
+    };
 
-    if (weatherCondition.includes('rain')) {
-        backgroundImage = '/Rainy.png';
-    } else if (weatherCondition.includes('clear')) {
-        backgroundImage = '/Sunny.png';
-    } else if (weatherCondition.includes('cloud')) {
-        backgroundImage = '/PartlyCloudy.png';
-    } else if (weatherCondition.includes('snow')) {
-        backgroundImage = '/Snow.png';
-    } else {
-        backgroundImage = '/default.png';
-    }
-
-    const iconUrl = `https://openweathermap.org/img/wn/${weatherInfo.icon}@4x.png`;
+    const backgroundImage = getBgWeather(todayForecast[0].weather[0].main);
 
     return (
         <>
@@ -69,35 +74,61 @@ export default function CityDetails({ weather }) {
             </header>
 
             <main
-                className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center"
+                className="min-h-screen bg-cover bg-center bg-no-repeat py-10 px-4 "
                 style={{ backgroundImage: `url('${backgroundImage}')` }}
             >
+                <div className="max-w-5xl mx-auto bg-white/40 p-6 rounded-xl shadow-lg">
+                    <h1 className="text-3xl text-gray-800 font-bold text-center mb-6">
+                        {name}
+                    </h1>
 
+                    {/* BUGÜNÜN DETAYLI SAATLİK VERİLERİ */}
+                    <section className="mb-10 ">
 
-                <section className="max-w-3xl w-full mx-auto p-6 mt-10 bg-white/45 bg-opacity-80 shadow-xl rounded-xl">
-                    <h1 className="text-4xl font-bold text-center mb-4">{name}, {country}</h1>
-
-                    <div className="flex flex-col items-center">
-                        <img src={iconUrl} alt={weatherInfo.description} className="w-32 h-32" />
-                        <p className="capitalize text-xl text-gray-600">{weatherInfo.description}</p>
-                        <p className="text-5xl font-bold text-blue-700 mt-2">{Math.round(temp)}°C</p>
-                    </div>
-
-                    <div className="mt-8 grid grid-cols-1 justify-items-center sm:grid-cols-2 gap-6 text-lg">
-                        <div>
-                            <p><span className="font-semibold">Felt Temperature:</span> {Math.round(feels_like)} °C</p>
-                            <p><span className="font-semibold">Min Temp:</span> {Math.round(temp_min)} °C</p>
-                            <p><span className="font-semibold">Max Temp:</span> {Math.round(temp_max)} °C</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {todayForecast.map((item) => (
+                                <div key={item.dt} className="bg-gradient-to-b from-blue-300 to-white shadow-md p-3 rounded-lg text-center hover:shadow-lg transition">
+                                    <p className="font-medium text-gray-800">{item.dt_txt.split(" ")[1].slice(0, 5)}</p>
+                                    <img
+                                        src={`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`}
+                                        alt={item.weather[0].description}
+                                        className="w-16 h-16 mx-auto"
+                                    />
+                                    <p className="text-lg font-bold text-blue-800">{Math.round(item.main.temp)}°C</p>
+                                    <p className="capitalize text-gray-700 text-sm">{item.weather[0].description}</p>
+                                    <p className="text-xs text-gray-500">Wind Speed: {item.wind.speed} m/s</p>
+                                    <p className="text-xs text-gray-500">Humidity: {item.main.humidity}%</p>
+                                </div>
+                            ))}
                         </div>
+                    </section>
 
-                        <div>
-                            <p><span className="font-semibold">Humidity:</span> {humidity}%</p>
-                            <p><span className="font-semibold">Pressure:</span> {pressure} hPa</p>
-                            <p><span className="font-semibold">Wind Speed:</span> {Math.round(speed)} m/s</p>
+                    {/* DİĞER GÜNLERİN ÖZETİ */}
+                    <section >
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                            {otherDays.map(([date, items]) => {
+
+                                const sampleHour = items.find((i) => i.dt_txt.includes("12:00")) || items[0];
+                                return (
+                                    <div key={date} className="bg-gradient-to-l from-white to-blue-300 shadow-md p-4 rounded-lg flex items-center gap-4 hover:bg-gray-200 transition">
+                                        <div>
+                                            <p className="text-md font-semibold text-gray-800">{date}</p>
+                                            <p className="text-sm text-gray-600 capitalize">{sampleHour.weather[0].description}</p>
+                                            <p className="text-sm text-blue-700 font-bold">{Math.round(sampleHour.main.temp)}°C</p>
+                                        </div>
+                                        <img
+                                            src={`https://openweathermap.org/img/wn/${sampleHour.weather[0].icon}@2x.png`}
+                                            alt={sampleHour.weather[0].description}
+                                            className="w-16 h-16"
+                                        />
+                                    </div>
+                                );
+                            })}
                         </div>
-                    </div>
-                </section>
-            </main>
+                    </section>
+                </div >
+            </main >
         </>
     );
 }

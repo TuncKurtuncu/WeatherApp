@@ -47,11 +47,11 @@ export async function getServerSideProps() {
 export default function Index ({ weatherData }) {
 
   return (
-    <main className=" bg-gray-100">
+    <main >
       <header className="sticky top-0 z-50">
         <Header />
       </header>
-      <div className="mt-0">
+      <div>
         <section>
           <MainSection />
         </section>

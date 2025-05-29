@@ -54,9 +54,9 @@ export default function Capitals({ weatherData }) {
                     <source src={video} type="video/mp4" />
                   </video>
 
-                  <div className="relative z-10 bg-black/50 px-4 py-6 rounded-lg text-center">
-                    <h2 className="text-2xl font-bold">{cityWeather.name}</h2>
-                    <p className="text-4xl font-semibold mt-1">{temperature}°C</p>
+                  <div className="relative z-10 bg-white/30 px-4 py-6 rounded-lg text-center text-black w-64 font-bold">
+                    <h2 className="text-2xl ">{cityWeather.name}</h2>
+                    <p className="text-4xl mt-1">{temperature}°C</p>
                   </div>
                 </div>
 

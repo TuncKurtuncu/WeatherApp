@@ -9,23 +9,31 @@ export async function getServerSideProps() {
 
   if (!API_KEY) {
     console.error("API key bulunamadı.");
-    return { props: { weatherData: [] } };  
+    return { props: { weatherData: [] } };
   }
 
   try {
     const weatherData = await Promise.all(
       capitals.map(async (city) => {
         try {
-          const res = await axios.get("https://api.openweathermap.org/data/2.5/weather", {
+          const res = await axios.get("https://api.openweathermap.org/data/2.5/forecast", {
             params: {
               q: city,
               appid: API_KEY,
               units: "metric",
             },
           });
-          return res.data;
+
+          // Forecast datası 3 saat aralıklarla gelir. İlk tahmini alalım (en yakın zaman).
+          const forecast = res.data.list[0]; // [0] = en yakın tahmin
+          return {
+            id: res.data.city.id,
+            name: res.data.city.name,
+            main: forecast.main,
+            weather: forecast.weather,
+          };
         } catch (err) {
-          console.error(`API isteği başarısız: ${city}`, err.response?.data || err.message);
+          console.error(`Forecast API isteği başarısız: ${city}`, err.response?.data || err.message);
           return null;
         }
       })

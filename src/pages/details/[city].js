@@ -40,7 +40,7 @@ export async function getServerSideProps(context) {
 export default function CityDetails({ forecastData, city }) {
     if (!forecastData || !city) return <div>Veri bulunamadı.</div>;
 
-    const { name, country } = city;
+    const { name} = city;
 
     const todayDate = Object.keys(forecastData)[0]; // Bugünün tarihi
     const todayForecast = forecastData[todayDate];

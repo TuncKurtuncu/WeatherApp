@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import img from '../Assets/MainImg.png';
 import logo from '../Assets/WeatherLogo.png';
 import Image from 'next/image';
+import WeatherSearch from '../Components/WeatherSearch';
 
 
 function MainSection() {
-    const [location, setLocation] = useState('');
+    
 
     return (
         <div className="relative w-full">
@@ -14,8 +15,8 @@ function MainSection() {
                 <Image
                     src={img}
                     alt="Background"
-                    fill          // layout="fill" yerine boolean fill prop'u
-                    style={{ objectFit: "cover" }}  // objectFit prop'u style içine alındı
+                    fill          
+                    style={{ objectFit: "cover" }}  
                     className="w-full h-full"
                 />
             </div>
@@ -39,18 +40,9 @@ function MainSection() {
                     </p>
 
                     {/* Arama Kutusu */}
-                    <form className="flex items-center justify-center gap-2">
-                        <input
-                            type="text"
-                            placeholder="Enter your location..."
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            className="px-4 py-2 rounded-md w-full md:w-2/3 bg-white"
-                        />
-                        <button className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md">
-                            Search
-                        </button>
-                    </form>
+                    <div className="flex items-center justify-center gap-2">
+                        <WeatherSearch/> 
+                    </div>
                 </section>
 
                 {/* Alt Özellik Kutuları */}

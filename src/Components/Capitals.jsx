@@ -37,36 +37,38 @@ export default function Capitals({ weatherData }) {
           <Link
             key={cityWeather.id}
             href={`/details/${cityWeather.name}`}
-            className="block"
+            className="block group"
           >
-            <div className="relative perspective-[1000px]">
-              <div className="relative w-full h-80 rounded-xl shadow-lg overflow-hidden">
+            <div className="relative w-full h-80 rounded-2xl overflow-hidden shadow-2xl transform transition duration-300 group-hover:scale-[1.02] group-hover:shadow-blue-200">
+              {/* Video Background */}
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              >
+                <source src={video} type="video/mp4" />
+              </video>
 
-                
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white backface-hidden">
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="absolute inset-0 w-full h-full object-cover z-0"
-                  >
-                    <source src={video} type="video/mp4" />
-                  </video>
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-black/30  z-10" />
 
-                  <div className="relative z-10 bg-white/30 px-4 py-6 rounded-lg text-center text-black w-64 font-bold">
-                    <h2 className="text-2xl ">{cityWeather.name}</h2>
-                    <p className="text-4xl mt-1">{temperature}°C</p>
-                  </div>
+              {/* Content */}
+              <div className="relative z-20 flex flex-col justify-center items-center h-full text-white text-center px-4">
+                <div className="bg-white/20 backdrop-blur-md p-6 rounded-xl w-full max-w-xs">
+                  <h2 className="text-2xl font-bold tracking-wide">{cityWeather.name}</h2>
+                  <p className="text-5xl font-extrabold mt-2">{temperature}°C</p>
+                  <p className="mt-1 text-sm font-medium capitalize">
+                    {cityWeather.weather[0].description}
+                  </p>
                 </div>
-
-
-
               </div>
             </div>
           </Link>
         );
       })}
     </div>
+
   );
 }

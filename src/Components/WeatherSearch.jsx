@@ -19,7 +19,8 @@ export default function HomePage() {
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="City Name"
-          className="border border-gray-300 rounded px-4 py-2 w-64 text-center"
+          className="border border-gray-300 rounded px-4 py-2 w-64 text-center text-black 
+          focus:outline-none focus:ring-1 focus:ring-gray-300 "
         />
         <button
           type="submit"
